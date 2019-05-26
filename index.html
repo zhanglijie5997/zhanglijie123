@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="msg">
+
+    </p>
+    <input type="text" id="value" oninput="change(event)" />
+    <button onclick="send()">
+        click
+    </button>
+    <button onclick="leaveChart()">
+        leave
+    </button>
+    <script>
+        const ws = new WebSocket("ws:localhost:8181");
+        const userId = Math.random().toFixed(2);
+        var value = '';
+        ws.onopen = (msg) => {
+            console.log(`链接成功`);
+            ws.send(JSON.stringify({ id: userId, name: "Mr.zhang", date: new Date() }));
+        }
+        ws.onmessage = function (res) {
+
+            var data = JSON.parse(res.data);
+            name = '';
+            console.log(data, '123');
+            if (data.name && typeof data === "object") {
+                console.log(data.name)
+                name = data.name;
+            }
+            console.log(name)
+            var p = '';
+            if(data.value) {
+                p = "<p>" + name + "说" + data.value + "</p>";
+            }else {
+                p = "<p>" + name + "进入聊天室</p>";
+            }
+            
+            document.getElementById("msg").innerHTML += p;
+
+        }
+        function change(e) {
+            value = e.target.value;
+        }
+        function send() {
+            // var value = 
+            console.log(value);
+            var p = "<p>" + userId + "说:" + value + "</p>"
+            document.getElementById("msg").innerHTML += p;
+            let users = {
+                name: userId,
+                value: value
+            }
+            ws.send(JSON.stringify(users));
+            document.getElementById("value").value = ''
+            console.log()
+        }
+        function leaveChart() {
+            console.log(999)
+            ws.onclose = function() {}
+        }
+        document.onkeydown = (event) => {
+            if(event && event.keyCode === 13) {
+                var p = "<p>" + userId + "说:" + value + "</p>"
+                document.getElementById("msg").innerHTML += p;
+                let users = {
+                    name: userId,
+                    value: value
+                }
+                ws.send(JSON.stringify(users));
+                document.getElementById("value").value = ''
+            }
+        }
+
+    </script>
+</body>
+
+</html>
