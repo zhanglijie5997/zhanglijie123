@@ -7,28 +7,52 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-
+<style>
+    .progress span{
+        display: inline-block;
+        height: 20px;
+        border-radius: 15px;
+        background: red;
+    }
+    .progress span::before {
+        content: '123';
+        background-image: url(http://img2.imgtn.bdimg.com/it/u=1395765958,3377106680&fm=26&gp=0.jpg)
+    }
+</style>
 <body>
     <p id="msg">
 
     </p>
     <input type="text" id="value" oninput="change(event)" />
-    <button onclick="send()">
+    <button onclick="send()" id="btn">
         click
     </button>
+    <div class="progress">
+        <span style="width: 10%" ></span>
+        <span id="gress">
+            <!-- <img src="http://img2.imgtn.bdimg.com/it/u=1395765958,3377106680&fm=26&gp=0.jpg" alt=""> -->
+        </span>
+    </div>
     <button onclick="leaveChart()">
         leave
     </button>
     <script>
-        const ws = new WebSocket("ws:localhost:8181");
+        let swich = true;
+        const ws = new WebSocket("ws:192.168.1.126:8181");
         const userId = Math.random().toFixed(2);
         var value = '';
+        var time = null;
+        time = setInterval(()=>{
+            document.getElementById("gress").style.width += 10 +"%";
+            if( document.getElementById("gress").style.width === (100 + '%')) {
+                clearInterval(time)
+            }
+        })
         ws.onopen = (msg) => {
             console.log(`链接成功`);
-            ws.send(JSON.stringify({ id: userId, name: "Mr.zhang", date: new Date() }));
+            ws.send(JSON.stringify({ id: "Mr.zhang", name:userId, date: new Date() }));
         }
         ws.onmessage = function (res) {
-
             var data = JSON.parse(res.data);
             name = '';
             console.log(data, '123');
@@ -51,7 +75,7 @@
             value = e.target.value;
         }
         function send() {
-            // var value = 
+
             console.log(value);
             var p = "<p>" + userId + "说:" + value + "</p>"
             document.getElementById("msg").innerHTML += p;
@@ -61,7 +85,9 @@
             }
             ws.send(JSON.stringify(users));
             document.getElementById("value").value = ''
-            console.log()
+            console.log();
+            swich = false;
+            document.getElementById("btn").attributes("")
         }
         function leaveChart() {
             console.log(999)
@@ -76,7 +102,8 @@
                     value: value
                 }
                 ws.send(JSON.stringify(users));
-                document.getElementById("value").value = ''
+                document.getElementById("value").value = '';
+                swich = false;
             }
         }
 

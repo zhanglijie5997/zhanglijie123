@@ -12,8 +12,14 @@ import { apiErrorHandler } from './api/upload/error';
 import { apiError } from './model/todo/message';
 import redis from 'redis';
 import uuid from "uuid/v4"
-import http from 'http'
+import http, { RequestOptions } from 'http'
 import webSocket from './api/websocket/websocket'
+import { apiLogin } from './api/posts/apiLogin';
+import mongoose from 'mongoose'
+import { clientMongodb } from './api/mongodbClient/mongodb';
+import { UserMsg } from './model/mongodbScheam';
+import apiRegister from './api/posts/apiRegister';
+import request from 'request';
 
 
 
@@ -24,9 +30,20 @@ const authenticator: CumtoRequestHandler = (req, res, next) => {
     next();
 }
 
+
+
+// 连接mongodb 数据库
+mongoose.connect(clientMongodb, { useNewUrlParser: true })
+    .then(res => console.log(`mongodb connect  火箭`))
+    .catch(err => { throw err; })
+
+const db = mongoose.connection;
+
+
+
 const logger: CumtoRequestHandler = (req, res, next) => {
-    console.log(`user - ${req.user}`)
-    console.log(`${new Date()} - ${req.method} - ${req.path}`);
+    // console.log(`user - ${req.user}`)
+    // console.log(`${new Date()} - ${req.method} - ${req.path}`);
     next();
 }
 const app = express();
@@ -69,8 +86,19 @@ app.put("/posts/:id", apiPutPost)
 // 上传图片
 app.post("/posts/:id/img", apiUploadImg)
 
-app.use((req, res, next) => {
 
+// 登录
+app.post("/user/login", apiLogin)
+
+// 注册
+app.post("/user/register", apiRegister)
+
+// 请求接口数据
+
+
+
+// 请求格式为application/json
+app.use((req, res, next) => {
     if (req.accepts('application/json')) {
         console.log(req.accepts())
         next();
@@ -79,12 +107,14 @@ app.use((req, res, next) => {
     }
 })
 
-
+// 测试headers
 app.get("/headers", (req, res, next) => {
     res.json({
         headers: req.headers
     })
 })
+
+
 
 // 处理错误信息
 app.use(apiErrorHandler);
@@ -132,6 +162,7 @@ webSocket(wss, WebSocket);
 // client.on("ready", () => {
 //     console.log(`redis连接成功`)
 // })
+var data: any = { username: "hello", password: "123456" };
 
 
 

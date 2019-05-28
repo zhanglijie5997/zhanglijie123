@@ -14,14 +14,23 @@ const path_1 = __importDefault(require("path"));
 const apiUploadImg_1 = require("./api/posts/apiUploadImg");
 const error_1 = require("./api/upload/error");
 const websocket_1 = __importDefault(require("./api/websocket/websocket"));
+const apiLogin_1 = require("./api/posts/apiLogin");
+const mongoose_1 = __importDefault(require("mongoose"));
+const mongodb_1 = require("./api/mongodbClient/mongodb");
+const apiRegister_1 = __importDefault(require("./api/posts/apiRegister"));
 const authenticator = (req, res, next) => {
     const username = "zhanglijie";
     req.user = username;
     next();
 };
+// 连接mongodb 数据库
+mongoose_1.default.connect(mongodb_1.clientMongodb, { useNewUrlParser: true })
+    .then(res => console.log(`mongodb connect  火箭`))
+    .catch(err => { throw err; });
+const db = mongoose_1.default.connection;
 const logger = (req, res, next) => {
-    console.log(`user - ${req.user}`);
-    console.log(`${new Date()} - ${req.method} - ${req.path}`);
+    // console.log(`user - ${req.user}`)
+    // console.log(`${new Date()} - ${req.method} - ${req.path}`);
     next();
 };
 const app = express_1.default();
@@ -49,6 +58,12 @@ app.delete("/posts/:id", apiDeletePost_1.apiDeletePost);
 app.put("/posts/:id", apiPutPost_1.apiPutPost);
 // 上传图片
 app.post("/posts/:id/img", apiUploadImg_1.apiUploadImg);
+// 登录
+app.post("/user/login", apiLogin_1.apiLogin);
+// 注册
+app.post("/user/register", apiRegister_1.default);
+// 请求接口数据
+// 请求格式为application/json
 app.use((req, res, next) => {
     if (req.accepts('application/json')) {
         console.log(req.accepts());
@@ -58,6 +73,7 @@ app.use((req, res, next) => {
         console.log(555);
     }
 });
+// 测试headers
 app.get("/headers", (req, res, next) => {
     res.json({
         headers: req.headers
@@ -98,6 +114,7 @@ websocket_1.default(wss, WebSocket);
 // client.on("ready", () => {
 //     console.log(`redis连接成功`)
 // })
+var data = { username: "hello", password: "123456" };
 app.listen(process.env.PORT || 8091, () => {
     console.log(`server start`);
 });
