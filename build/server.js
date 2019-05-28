@@ -18,6 +18,9 @@ const apiLogin_1 = require("./api/posts/apiLogin");
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongodb_1 = require("./api/mongodbClient/mongodb");
 const apiRegister_1 = __importDefault(require("./api/posts/apiRegister"));
+const apiQrimage_1 = __importDefault(require("./untils/apiQrimage"));
+const cros_1 = __importDefault(require("./untils/cros"));
+const apiGetQrImage_1 = __importDefault(require("./api/posts/apiGetQrImage"));
 const authenticator = (req, res, next) => {
     const username = "zhanglijie";
     req.user = username;
@@ -34,6 +37,8 @@ const logger = (req, res, next) => {
     next();
 };
 const app = express_1.default();
+// 设置跨域
+app.all("*", cros_1.default);
 // console.log(DataStore.post)
 // 解析post请求
 app.use(body_parser_1.default.urlencoded({ extended: false }));
@@ -62,7 +67,11 @@ app.post("/posts/:id/img", apiUploadImg_1.apiUploadImg);
 app.post("/user/login", apiLogin_1.apiLogin);
 // 注册
 app.post("/user/register", apiRegister_1.default);
-// 请求接口数据
+// 生成二维码接口
+app.get("/qr", apiQrimage_1.default);
+// 图片返回
+const urlEncode = body_parser_1.default.urlencoded({ extended: false });
+app.post("/getQrImage", urlEncode, apiGetQrImage_1.default);
 // 请求格式为application/json
 app.use((req, res, next) => {
     if (req.accepts('application/json')) {

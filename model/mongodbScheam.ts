@@ -24,7 +24,7 @@ export const UserScheam:Schema = new Schema({
 })
 
 
-export const UserMsg:Model<IuserModel> = model<IuserModel>("user",UserScheam)
+export const UserMsg:Model<IuserModel> = model<IuserModel>("users",UserScheam)
 
 
 
