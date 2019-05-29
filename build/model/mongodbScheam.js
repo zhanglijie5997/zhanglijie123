@@ -18,4 +18,4 @@ exports.UserScheam = new mongoose_1.Schema({
         default: Date.now
     }
 });
-exports.UserMsg = mongoose_1.model("user", exports.UserScheam);
+exports.UserMsg = mongoose_1.model("users", exports.UserScheam);

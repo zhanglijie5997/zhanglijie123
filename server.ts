@@ -20,6 +20,12 @@ import { clientMongodb } from './api/mongodbClient/mongodb';
 import { UserMsg } from './model/mongodbScheam';
 import apiRegister from './api/posts/apiRegister';
 import request from 'request';
+import qrImage from 'qr-image'
+import apiQrimage from './untils/apiQrimage';
+import cros from './untils/cros';
+import apiGetQrImage from './api/posts/apiGetQrImage';
+
+
 
 
 
@@ -48,6 +54,9 @@ const logger: CumtoRequestHandler = (req, res, next) => {
 }
 const app = express();
 
+
+// 设置跨域
+app.all("*", cros)
 // console.log(DataStore.post)
 
 // 解析post请求
@@ -93,9 +102,12 @@ app.post("/user/login", apiLogin)
 // 注册
 app.post("/user/register", apiRegister)
 
-// 请求接口数据
+// 生成二维码接口
+app.get("/qr", apiQrimage)
 
-
+// 图片返回
+const urlEncode = bodyParser.urlencoded({ extended: false });
+app.post("/getQrImage", urlEncode,apiGetQrImage)
 
 // 请求格式为application/json
 app.use((req, res, next) => {
