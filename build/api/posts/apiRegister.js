@@ -28,10 +28,6 @@ exports.default = (req, res, next) => {
             newUser.save((err, next) => {
                 if (err)
                     throw err;
-                /* res.status(200).json({
-                    status: 1000,
-                    message: "loading..."
-                }) */
                 res.json(new message_1.publicInfo("success", 1000, {
                     email: req.body.email,
                 }));
