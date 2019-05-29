@@ -6,6 +6,7 @@ export interface IuserModel extends User,Document{
 }
 
 export const UserScheam:Schema = new Schema({
+    
     name:{
         type:String,
     },
@@ -16,6 +17,9 @@ export const UserScheam:Schema = new Schema({
     password:{
         type:String,
         required:true
+    },
+    avatar:{
+        type:String,
     },
     date:{
         type:Date,

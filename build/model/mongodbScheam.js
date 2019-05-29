@@ -13,6 +13,9 @@ exports.UserScheam = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    avatar: {
+        type: String,
+    },
     date: {
         type: Date,
         default: Date.now
